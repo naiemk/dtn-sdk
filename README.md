@@ -23,7 +23,7 @@ To utilize AI functionality in your dApp, you need to understand three concepts:
 
 - **AI Session**: Sessions are used to manage payment for AI requests the services. It works with USDT. To start a session, you need to first send some tokens to the `ai.feeTarget()`, and then call `ai.startUserSession();` That's all.
 - **AI Models and APIs**: You need to select a model for your request. Each model, may support a different API. Different models may cost different per byte. You can find supported models and their APIs in the model dashboard of DTN explorer. In future sections we will give some examples.
-- **DTN Routing**: Routing is about your trust expectation. DTN is very flexible in this regards. You need to choose a trust namespace based on your requirements. Two common use-cases are the default DTN network trust namesapce: `system.trust.dtn` which is a set of staked nodes. Or your own proprietary nodes: `node.mynode.node1`. Direct nodes routing can be useful for testing, or custom usecases. We will pack this a bit later.
+- **DTN Routing**: Routing is about your trust expectation. DTN is very flexible in this regards. You need to choose a trust namespace based on your requirements. Two common use-cases are the default DTN network trust namesapce: `system.trust.dtn` which is a set of staked nodes. Or your own proprietary nodes: `node.mynode.node1`. Direct nodes routing can be useful for testing, or custom usecases. We will come back to this a bit later.
 - **DTN Callback**: Every request needs two callbacks. First for success, and second for failure. Call back functions have the following syntax - `function myCallBack(bytes32 requestId) external onlyDtn { ... }`
 
 ## Example
@@ -37,10 +37,10 @@ Following is an example that shows how to use DTN contracts.
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../../utils/with-dtn-ai.sol";
+import "@deeptrust/contracts/with-dtn-ai.sol";
+import "@deeptrust/contracts/dtn-defaults.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../../utils/dtn-defaults.sol";
 import "hardhat/console.sol";
 
 contract CallAiExample is WithDtnAi {
