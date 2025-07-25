@@ -5,7 +5,7 @@ This repository is the set of smart contracts to be
 ## Installation
 
 ```
-$ npm i --save @dtn/contracts
+$ npm i --save @deeptrust/contracts
 ```
 
 ## What will this install?
