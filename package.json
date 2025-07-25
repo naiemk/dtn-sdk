@@ -1,0 +1,29 @@
+{
+  "name": "@deeptrust/contracts",
+  "version": "1.0.0",
+  "description": "Deep Trust Network Software Development Kit",
+  "keywords": [
+    "DeepTrust",
+    "Network",
+    "AI",
+    "Solidity"
+  ],
+  "homepage": "https://github.com/naiemk/dtn-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/naiemk/dtn-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naiemk/dtn-sdk.git"
+  },
+  "license": "MIT",
+  "author": "Naiem Yeganeh",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "contracts"
+  ]
+}
