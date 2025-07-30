@@ -21,7 +21,12 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:build": "./build-docs.sh",
+    "docs:serve": "./build-docs.sh --serve",
+    "docs:clean": "rm -rf docs/site site",
+    "docs:dev": "mkdocs serve -f docs/mkdocs.yml",
+    "docs:build-simple": "mkdocs build -f docs/mkdocs.yml --site-dir docs/site"
   },
   "files": [
     "contracts"

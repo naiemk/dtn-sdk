@@ -1,0 +1,334 @@
+/* Custom styles for DTN SDK Documentation - ReadTheDocs Theme */
+
+/* Custom color variables */
+:root {
+  --dtn-primary: #6366f1;
+  --dtn-secondary: #8b5cf6;
+  --dtn-accent: #06b6d4;
+  --dtn-success: #10b981;
+  --dtn-warning: #f59e0b;
+  --dtn-error: #ef4444;
+  --dtn-dark: #1f2937;
+  --dtn-light: #f9fafb;
+}
+
+/* Custom header styling */
+.wy-nav-top {
+  background: linear-gradient(135deg, var(--dtn-primary), var(--dtn-secondary));
+}
+
+/* Custom navigation styling */
+.wy-nav-side {
+  background: var(--dtn-dark);
+}
+
+.wy-nav-side .wy-menu-vertical li.current > a {
+  background: var(--dtn-primary);
+  color: white;
+}
+
+.wy-nav-side .wy-menu-vertical li.current > a:hover {
+  background: var(--dtn-secondary);
+}
+
+.wy-nav-side .wy-menu-vertical a {
+  color: #b3b3b3;
+}
+
+.wy-nav-side .wy-menu-vertical a:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--dtn-primary);
+}
+
+/* Custom link styling */
+.wy-content a {
+  color: var(--dtn-primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.wy-content a:hover {
+  border-bottom-color: var(--dtn-primary);
+}
+
+/* Custom code block styling */
+.wy-content pre {
+  background: var(--dtn-dark);
+  border-radius: 8px;
+  border-left: 4px solid var(--dtn-primary);
+}
+
+/* Custom admonition styling */
+.admonition {
+  border-radius: 8px;
+  border-left: 4px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admonition.note {
+  border-left-color: var(--dtn-primary);
+}
+
+.admonition.warning {
+  border-left-color: var(--dtn-warning);
+}
+
+.admonition.error {
+  border-left-color: var(--dtn-error);
+}
+
+.admonition.success {
+  border-left-color: var(--dtn-success);
+}
+
+/* Custom button styling */
+.wy-btn {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.wy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Custom table styling */
+.wy-table-responsive table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wy-table-responsive table th {
+  background: var(--dtn-primary);
+  color: white;
+  font-weight: 600;
+}
+
+/* Custom footer styling */
+.wy-footer {
+  background: var(--dtn-dark);
+  color: white;
+}
+
+/* Custom search styling */
+.wy-side-nav-search {
+  background: linear-gradient(135deg, var(--dtn-primary), var(--dtn-secondary));
+}
+
+.wy-side-nav-search input[type="text"] {
+  border-radius: 20px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.wy-side-nav-search input[type="text"]:focus {
+  border-color: white;
+}
+
+/* Custom breadcrumb styling */
+.wy-breadcrumbs {
+  background: var(--dtn-light);
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.wy-breadcrumbs a {
+  color: var(--dtn-primary);
+}
+
+/* Custom progress bar */
+.wy-progress {
+  background: var(--dtn-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dtn-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dtn-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dtn-secondary);
+}
+
+/* Custom selection */
+::selection {
+  background: var(--dtn-primary);
+  color: white;
+}
+
+/* Custom focus outline */
+:focus {
+  outline: 2px solid var(--dtn-primary);
+  outline-offset: 2px;
+}
+
+/* Custom typography */
+.wy-content h1 {
+  color: var(--dtn-primary);
+  border-bottom: 2px solid var(--dtn-primary);
+  padding-bottom: 0.5rem;
+}
+
+.wy-content h2 {
+  color: var(--dtn-secondary);
+  border-left: 4px solid var(--dtn-secondary);
+  padding-left: 1rem;
+}
+
+.wy-content h3 {
+  color: var(--dtn-accent);
+}
+
+/* Custom blockquote styling */
+.wy-content blockquote {
+  border-left: 4px solid var(--dtn-primary);
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 0 8px 8px 0;
+}
+
+/* Custom list styling */
+.wy-content ul li::marker {
+  color: var(--dtn-primary);
+}
+
+.wy-content ol li::marker {
+  color: var(--dtn-primary);
+  font-weight: 600;
+}
+
+/* Custom image styling */
+.wy-content img {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom code inline styling */
+.wy-content code {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--dtn-primary);
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+}
+
+/* Custom badge styling */
+.wy-content .badge {
+  background: var(--dtn-primary);
+  color: white;
+  padding: 0.2em 0.6em;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+/* Custom tooltip styling */
+.wy-tooltip {
+  background: var(--dtn-dark);
+  color: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom version selector */
+.wy-dropdown {
+  background: var(--dtn-primary);
+}
+
+.wy-dropdown a {
+  color: white;
+}
+
+.wy-dropdown a:hover {
+  background: var(--dtn-secondary);
+}
+
+/* Custom edit button */
+.wy-breadcrumbs .wy-breadcrumbs-aside .fa {
+  color: var(--dtn-primary);
+}
+
+/* Custom navigation arrows */
+.wy-nav-content .wy-nav-content-wrap .wy-nav-content-top .wy-nav-content-left .wy-nav-content-right {
+  background: var(--dtn-light);
+}
+
+.wy-nav-content .wy-nav-content-wrap .wy-nav-content-top .wy-nav-content-left .wy-nav-content-right a {
+  color: var(--dtn-primary);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .wy-content h1 {
+    font-size: 1.8rem;
+  }
+  
+  .wy-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  .wy-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .wy-nav-side {
+    width: 100%;
+    position: relative;
+  }
+}
+
+/* Print styles */
+@media print {
+  .wy-nav-side,
+  .wy-nav-top,
+  .wy-breadcrumbs {
+    display: none;
+  }
+  
+  .wy-content {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom highlight colors for code */
+.highlight {
+  background: var(--dtn-dark);
+  border-radius: 8px;
+  border-left: 4px solid var(--dtn-primary);
+}
+
+.highlight pre {
+  background: transparent;
+  border: none;
+}
+
+/* Custom admonition icons */
+.admonition-title::before {
+  color: var(--dtn-primary);
+}
+
+/* Custom search results */
+.wy-side-nav-search .wy-dropdown {
+  background: white;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.wy-side-nav-search .wy-dropdown a {
+  color: var(--dtn-dark);
+}
+
+.wy-side-nav-search .wy-dropdown a:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--dtn-primary);
+} 

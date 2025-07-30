@@ -1,0 +1,135 @@
+site_name: Deep Trust Network SDK
+site_description: Smart contracts and development kit for the Deep Trust Network
+site_author: Deep Trust Network Team
+site_url: https://deeptrust.network
+
+repo_name: deeptrust/dtn-sdk
+repo_url: https://github.com/deeptrust/dtn-sdk
+edit_uri: edit/main/docs/
+
+# Theme configuration - ReadTheDocs
+theme:
+  name: readthedocs
+  highlightjs: true
+  prev_next_buttons_location: both
+  navigation_depth: 4
+  collapse_navigation: true
+  sticky_navigation: true
+  include_search_page: false
+  search_bar_position: right
+  use_edit_page_button: true
+  display_version: true
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+
+# Markdown extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      title: On this page
+  - codehilite:
+      use_pygments: true
+      linenums: true
+      css_class: highlight
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: datetime
+  - minify:
+      minify_html: true
+
+# Navigation
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+  - Core Concepts:
+    - AI Sessions: concepts/ai-sessions.md
+    - AI Models and APIs: concepts/ai-models-apis.md
+    - DTN Routing: concepts/dtn-routing.md
+    - DTN Callbacks: concepts/dtn-callbacks.md
+  - Smart Contracts:
+    - Overview: contracts/overview.md
+    - with-dtn-ai.sol: contracts/with-dtn-ai.md
+    - with-dtn-ai-upgradeable.sol: contracts/with-dtn-ai-upgradeable.md
+    - idtn-ai.sol: contracts/idtn-ai.md
+    - dtn-defaults.sol: contracts/dtn-defaults.md
+  - Examples:
+    - Basic AI Call: examples/basic-ai-call.md
+    - Image Generation: examples/image-generation.md
+    - Session Management: examples/session-management.md
+  - API Reference:
+    - Contract Interfaces: api/interfaces.md
+    - Functions: api/functions.md
+    - Events: api/events.md
+  - Advanced Topics:
+    - Custom Routing: advanced/custom-routing.md
+    - Fee Management: advanced/fee-management.md
+    - Error Handling: advanced/error-handling.md
+
+# Extra configuration
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/deeptrust/dtn-sdk
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/deeptrustnetwork
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/deeptrust
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+
+# Extra CSS and JavaScript
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# Copyright
+copyright: Copyright &copy; 2024 Deep Trust Network Team 

@@ -35,9 +35,9 @@ library DtnDefaults {
         return array;
     }
 
-    function singleArray(string memory value) internal pure returns (bytes32[] memory) {
-        bytes32[] memory array = new bytes32[](1);
-        array[0] = keccak256(abi.encode(value));
+    function singleArray(string memory value) internal pure returns (string[] memory) {
+        string[] memory array = new string[](1);
+        array[0] = value;
         return array;
     }
 
