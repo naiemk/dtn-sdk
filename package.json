@@ -1,6 +1,6 @@
 {
   "name": "@deeptrust/contracts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Deep Trust Network Software Development Kit",
   "keywords": [
     "DeepTrust",
@@ -29,6 +29,7 @@
     "docs:build-simple": "mkdocs build -f docs/mkdocs.yml --site-dir docs/site"
   },
   "files": [
-    "contracts"
+    "contracts",
+    "*.sol"
   ]
 }
