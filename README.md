@@ -174,4 +174,11 @@ contract CallAiExample is WithDtnAi {
 ```
 
 
+# Tests
 
+You can test your contracts functionality (unit tests) by using the provided `MockDtnAi.sol`
+
+1. Deploy the mock AI in your test
+2. Use it as the Dtn Router (`WithDtnAi.setAi`)
+3. Inspect the created request by using `getRequest`
+4. Mock respond to the request by: `mockAi.respondSuccess` or `mockAi.respondError`
