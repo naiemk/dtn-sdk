@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {IDtnAi} from "./idtn-ai.sol";
+import {IDtnAi} from "@deeptrust/contracts/idtn-ai.sol";
 
 /**
  * @title MockDtnAi
  * @notice Mock implementation of IDtnAi for testing purposes
  */
-contract MockDtnAi is IDtnAi {
+contract LocalMockDtnAi is IDtnAi {
     // State variables
     address public feeToken;
     address public feeTarget;
@@ -144,8 +144,9 @@ contract MockDtnAi is IDtnAi {
         // Execute callback if provided
         CallBack storage callback = callbacks[requestId];
         if (callback.target != address(0) && callback.success != bytes4(0)) {
+            // Call the callback with only the requestId parameter (not requestId, value)
             (bool success, ) = callback.target.call(
-                abi.encodeWithSelector(callback.success, requestId, value)
+                abi.encodeWithSelector(callback.success, requestId)
             );
             emit CallbackExecuted(requestId, success);
         }
@@ -171,8 +172,9 @@ contract MockDtnAi is IDtnAi {
         // Execute callback if provided
         CallBack storage callback = callbacks[requestId];
         if (callback.target != address(0) && callback.failure != bytes4(0)) {
+            // Call the callback with only the requestId parameter (not requestId, message)
             (bool success, ) = callback.target.call(
-                abi.encodeWithSelector(callback.failure, requestId, message)
+                abi.encodeWithSelector(callback.failure, requestId)
             );
             emit CallbackExecuted(requestId, success);
         }
