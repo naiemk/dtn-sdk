@@ -1,0 +1,339 @@
+
+
+# Dtn-AI CONTEXT:
+
+DtnAI is platform for making on-chain AI requests to major LLMs. Below is example of a smart-contract generating a request. Requests can be text or image. Results can be returned in callback dierctly or through IPFS. The failure callback can receive a message.
+
+
+```
+import "@deeptrust/contracts/with-dtn-ai.sol";
+import "@deeptrust/contracts/dtn-defaults.sol";
+
+contract CallAiExample is WithDtnAi {
+    event Request(bytes32 requestId, string[] prompt_lines, bytes extraParams);
+    event Result(bytes32 requestId, IDtnAi.ResponseStatus status, string message, string result);
+    event Error(bytes32 requestId);
+
+    string public result;
+    string public error;
+    uint256 public sessionId;
+    bytes32 public requestId;
+    string public ipfsCid;
+    
+    constructor(address ai) {
+        setAi(ai);
+    }
+
+    function callAiForText(string memory prompt) public payable {
+        // Prompts are usually multiple lines. They will be concatenated in multiple lines.
+        // They also provide parameterization. You can include positioned arguments, with their relevant type in the prompt.
+        // Then you need to provide the extraParams, as the encoded value of these positional arguments. 
+        // Note that if the provided arguments are not exact match, your request will be rejected and failure callback will be called.
+
+        string[] memory prompt_lines = new string[](2);
+        prompt_lines[0] = "This is metadata - {0:uint8} and {1:address} -. Ignore the metadata and answer the next question:";
+        prompt_lines[1] = prompt;
+        bytes memory extraParams = abi.encode(26, address(this)); // These are the extra parmeters to the prompt's line[0]
+
+	string memory node = "node.tester.node1";
+	string memory model = "model.system.openai-gpt-o3-simpletext";
+
+        doCallAiDetailed(prompt_lines, extraParams, node, model, IDtnAi.CallType.DIRECT);
+    }
+
+    function callAiForImage(
+        string[] memory prompt_lines, bytes memory extraParamsEncoded, string memory node, string memory model, uint64 width, uint64 height
+        ) public payable {
+        // This is a repeat of the previous function, but uses an image model that expects binary data stored on IPFS
+        if (sessionId == 0) {
+            restartSession();
+        }
+	doCallAiDetailed(prompt_lines, extraParams, node, model, IDtnAi.CallType.IPFS);
+    }
+
+    function doCallAiDetailed(string[] memory prompt_lines, bytes memory extraParamsEncoded, string memory node, string memory model, IDtnAi.CallType callType) public payable {
+        if (sessionId == 0) {
+            restartSession(); // Requests need a valid session ID. The contract starting the session will be it's owner
+        }
+
+        requestId = ai.request{value: msg.value}( // We are sending some to the call. This is to pay for the callback
+            sessionId,
+            keccak256(abi.encodePacked(model)), // the model ID
+            DtnDefaults.defaultCustomNodesValidatedAny(DtnDefaults.singleArray(keccak256(abi.encodePacked(node)))), // Default routing
+            IDtnAi.DtnRequest({ 
+                call: abi.encode(prompt_lines, width, height),
+                extraParams: extraParamsEncoded,
+		calltype: callType,
+                feePerByteReq: 0.001 * 10**18, // FeePerByte. This will be paid to nodes running the model
+                feePerByteRes: 0.001 * 10**18,
+                totalFeePerRes: 1 * 10**18  // Maximum fee (USDT) we want to pay for this request
+            }),
+            IDtnAi.CallBack(
+                this.callbackIpfs.selector, // Success case
+                this.aiError.selector, // Failure cae
+                address(this) // Callback receiver
+            ),
+            msg.sender, // Address for gas refund
+            msg.value // Gas for callback
+        );
+        emit Request(requestId, prompt_lines, extraParamsEncoded);
+    }
+
+
+    function restartSession() public {
+        if (sessionId != 0) {
+            ai.closeUserSession(sessionId); // Unused funds will be refunded when we close the session
+        }
+        uint amount = IERC20(ai.feeToken()).balanceOf(address(this)); // Use what we have to start a session
+        require(amount > 0, "Not enough tokens to start a session");
+        IERC20( ai.feeToken() ).safeTransfer(ai.feeTarget(), amount);
+        sessionId = ai.startUserSession();
+    }
+
+    function callback(bytes32 _requestId) external onlyDtn {
+        // NOTE: Callback must use the `onlyDtn` modifier to make sure only DTN contracts are allowed to call it
+        // otherwise this function can be abused
+        (IDtnAi.ResponseStatus status, string memory message, bytes memory response) = ai.fetchResponse(_requestId);
+
+        // You should know what the expected return type is and you need to parse the return type (always encoded as bytes) to the
+        // expected type. If you expect an IPFS cid because your request had IPFS type, parse the result into string.
+        result = abi.decode(response, (string));
+        emit Result(_requestId, status, message, result);
+    }
+
+    function callbackIpfs(bytes32 _requestId) external onlyDtn {
+        (IDtnAi.ResponseStatus status, string memory message, bytes memory response) = ai.fetchResponse(_requestId);
+        ipfsCid = abi.decode(response, (string));
+        emit Result(_requestId, status, message, ipfsCid);
+    }
+
+    function aiError(bytes32 _requestId) external onlyDtn {
+        (, string memory message, ) = ai.fetchResponse(_requestId);
+        error = message;
+        emit Error(_requestId);
+    }
+}
+```
+
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.28;
+
+interface IDtnAiModels {
+    function modelId(string memory modelName) external view returns (bytes32);
+}
+
+/**
+ * @title IDtnAi
+ * @notice Interface for DtnAI, defining the core AI interaction methods
+ */
+interface IDtnAi is IDtnAiModels {
+    /**
+     * @notice Represents different types of AI call responses
+     */
+    enum CallType {
+        IPFS,      // Response will be stored on IPFS
+        DIRECT     // Response will be returned directly
+    }
+
+    enum AggregationType {
+        ANY,
+        ALL,
+        SELECT_BEST,
+        VOTE,
+        RANK
+    }
+
+    /**
+     * @notice Structure for AI request parameters
+     */
+    struct DtnRequest {
+        bytes call;     // Encoded call data according to the model API
+        bytes extraParams; // Extra parameters for the call, used as parameters for the call
+        CallType calltype;  // Type of response expected
+        uint256 feePerByteReq; // Fee per byte for request size
+        uint256 feePerByteRes; // Fee per byte for response size
+        uint256 totalFeePerRes; // Maximum total fee for response
+    }
+
+    struct DtnRouting {
+        bytes32[] trustNamespaceIds;
+        bytes32[] trustedNodeIds; // Allows to specify a list of trusted nodes to answer the request
+        uint32 redundancy; // How many nodes will answer the same request
+        uint8 confidenceLevel; // 0 - 10
+        AggregationType aggregationType;
+    }
+
+    /**
+     * @notice Structure for AI response
+     */
+    struct Response {
+        ResponseStatus status;      // Response status code
+        string message;      // Additional message or error details
+        bytes response;     // The actual response data (abi encoded)
+        bytes32 nodeId;      // ID of the node that provided the response
+        uint256 timestamp;   // When the response was provided
+    }
+
+    /**
+     * @notice Callback structure for handling AI responses
+     */
+    struct CallBack {
+        bytes4 success;     // Function selector for successful response
+        bytes4 failure;     // Function selector for failed response
+        address target;     // Contract to call back
+    }
+
+    enum ResponseStatus {
+        NA,
+        SUCCESS,
+        FAILURE
+    }
+
+    /**
+     * @notice Starts a new user session with specified token amount
+     * @return sessionId Unique identifier for the created session
+     */
+    function startUserSession() external returns (uint256 sessionId);
+
+    /**
+     * @notice Closes an active user session
+     * @param sessionId ID of the session to close
+     */
+    function closeUserSession(uint256 sessionId) external;
+
+    /**
+     * @notice Makes an AI request
+     * @param sessionId Active session ID
+     * @param modelId ID of the AI model to use
+     * @param routingSystem Routing system configuration
+     * @param dtnRequest Request parameters including call data and type
+     * @param callback Callback information for handling response
+     * @param user Address of the user making the request
+     * @param callbackGas Gas limit for callback execution
+     * @return requestId Unique identifier for the request
+     */
+    function request(
+        uint256 sessionId,
+        bytes32 modelId,
+        IDtnAi.DtnRouting memory routingSystem,
+        IDtnAi.DtnRequest memory dtnRequest,
+        IDtnAi.CallBack memory callback,
+        address user,
+        uint256 callbackGas
+    ) external payable returns (bytes32 requestId);
+
+    /**
+     * @notice Fetches the response from the last AI request
+     * @return status Response status
+     * @return message Additional message or error details
+     * @return response The actual response data
+     */
+    function fetchResponse(bytes32 requestId) external view returns (
+        ResponseStatus status,
+        string memory message,
+        bytes memory response
+    );
+
+    /**
+     * @notice Responds to an AI request
+     * @param requestId The ID of the request to respond to
+     * @param status The status of the response (0 for success)
+     * @param message Additional message or error details
+     * @param response The actual response data
+     * @param nodeId The ID of the responding node
+     * @param requestSize Size of request in bytes
+     * @param responseSize Size of response in bytes
+     */
+    function respondToRequest(
+        bytes32 requestId,
+        ResponseStatus status,
+        string memory message,
+        bytes memory response,
+        bytes32 nodeId,
+        uint256 requestSize,
+        uint256 responseSize
+    ) external;
+
+    function feeToken() external view returns (address);
+
+    function feeTarget() external view returns (address);
+}
+```
+
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./idtn-ai.sol";
+
+library DtnDefaults {
+    function defaultRoutingSystemValidatedAny() internal pure returns (IDtnAi.DtnRouting memory) {
+        bytes32[] memory namespaces = new bytes32[](1);
+        namespaces[0] = keccak256(abi.encode("trust.system.authored"));
+        
+        return IDtnAi.DtnRouting({
+            trustNamespaceIds: namespaces,
+            trustedNodeIds: new bytes32[](0),
+            redundancy: 1,
+            confidenceLevel: 8,
+            aggregationType: IDtnAi.AggregationType.ANY
+        });
+    }
+
+    function defaultCustomNodesValidatedAny(bytes32[] memory customNodes) internal pure returns (IDtnAi.DtnRouting memory) {
+        bytes32[] memory namespaces = new bytes32[](0);
+        
+        return IDtnAi.DtnRouting({
+            trustNamespaceIds: namespaces,
+            trustedNodeIds: customNodes,
+            redundancy: 1,
+            confidenceLevel: 8,
+            aggregationType: IDtnAi.AggregationType.ANY
+        });
+    }
+
+    function singleArray(bytes32 value) internal pure returns (bytes32[] memory) {
+        bytes32[] memory array = new bytes32[](1);
+        array[0] = value;
+        return array;
+    }
+
+    function singleArray(string memory value) internal pure returns (string[] memory) {
+        string[] memory array = new string[](1);
+        array[0] = value;
+        return array;
+    }
+
+    uint256 public constant ROUTING_SYSTEM_VALIDATED_ANY_CONSTANT = 1;
+}
+```
+
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.28;
+
+import {IDtnAi} from "./idtn-ai.sol";
+
+/**
+ * @title WithDtnAi
+ * @notice Implement this interface to use DtnAI
+ */
+abstract contract WithDtnAi  {
+    IDtnAi public ai;
+
+    modifier onlyDtn() {
+        require(msg.sender == address(ai), "Only Dtn can call this function");
+        _;
+    }
+
+    function setAi(address _ai) internal {
+        ai = IDtnAi(_ai);
+    }
+}
+```
+
+# Problem Statement

@@ -2,6 +2,11 @@
 
 This repository is the set of smart contracts to be 
 
+## Using with LLM
+
+To use with LLM, copy content of (./AI.txt)[AI Prompt] to your prompt followed by `#Promblem Statement`
+
+
 ## Installation
 
 ```
