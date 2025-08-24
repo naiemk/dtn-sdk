@@ -6,6 +6,15 @@ Welcome to the Deep Trust Network (DTN) SDK documentation. This comprehensive gu
 
 The Deep Trust Network SDK provides a set of smart contracts that enable developers to seamlessly integrate AI capabilities into their blockchain applications. The SDK handles the complex aspects of AI request routing, payment processing, and result delivery through a trust-based network.
 
+## Deployed Contracts
+
+**BASE Network**
+
+- DTN Router (0x45B80f551646fDaC777A4991FbdA748Fc5A72194)
+- DTN Node Manager (0xa579c301bB320276b85Ec12C6693eCf9f493146B)
+- DTN Model Manager (0x27d0BAEcb181c3bB1B5850049092D40eE7b1fE3d) 
+- DTN Session Manager (0xB93f4869C36beF19C610c32e2596C1abb8Fa878d)
+
 ## Key Features
 
 - **AI Session Management**: Handle payments and session lifecycle for AI requests
